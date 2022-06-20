@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+{% block 'blankPage' %}
+    <div class="container">
+      <form method="POST" id="form" action="{% url 'editarPerfil' %}" enctype="multipart/form-data">
+        {%csrf_token%}
+        <div class="row gutters">
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="account-settings">
+                            <div>
+                              <div class="">
+                                <div class="image">
+
+                                  <div class="editar-content">
+                                    <span>
+                                      <i>editar</i>
+                                    </span>
+                                  </div>
+                                  {%if user.foto_perfil %}
+                                    <div id="new">
+                                      <div class="close-preview-js close-preview">x</div>
+                                    </div>
+                                      <div class="image">
+                                        <img src="{{user.foto_perfil}}">
+                                      </div>
+                                    </div>
+                                    <br>
+                                    <label for="file-preview-js" class="custom-file-upload">
+                                      <img class="img-profile rounded-circle" src="/static/img/edit.jpg" height="20" width="20" align="right"></label>
+                                    <input id="file-preview-js" type="file" accept="image/*" onchange="loaderFile(event)">
+                                  {% else %}
+                                      <div id="new">
+                                        <div class="close-preview-js close-preview">x</div>
+                                      </div>
+                                      <img src="/static/img/profile.png" alt="Sem imagem">
+                                    </div>
+                                    <br>
+                                    <label for="file-preview-js" class="custom-file-upload">
+                                    <img class="img-profile rounded-circle" src="/static/img/edit.jpg" height="20" width="20" align="right"></label>
+                                    <input id="file-preview-js" type="file" accept="image/*" onchange="loaderFile(event)">
+                                {% endif %}
+                              </div>
+                            </div>
+                            <div>
+                                <br>
+                                <br>
+                                <h5 class="user-name">{{user.username}}</h5>
+                                <h6 class="user-email">{{user.email}}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="row gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <h6 class="mb-3 text-primary">Perfil</h6>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                  <input type="text" class="form-control" id="nome" value="{{user.first_name}}">
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="sobrenome" value="{{user.last_name}}">
+                              </div>
+                          </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                              <div class="form-group">
+                                    <input type="email" class="form-control" id="eMail" value="{{user.email}}" placeholder="Email">
+                                </div>
+                            </div>
+                            <input type="hidden" name="usuario" id="usuario" value="{{user.id}}">
+
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                              <h6 class="mb-3 text-primary">Contatos</h6>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-9">
+                              <div class="form-group">
+                                <select class="form-control" id="tipo" name="tipo" value="Selecione" >
+                                    <option>Telefone</option>
+                                    <option>Celular</option>
+                                    <option>Facebook</option>
+                                    <option>Twitter</option>
+                                    <option>Instagram</option>
+                                    <option>Linkedin</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+                                <div class="form-group">
+                                  <input class="form-control" id="contato" name="contato" onkeypress="mask(this, mphone);" onblur="mask(this, mphone);" value="Insira aqui o contato" >
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-9">
+                              <div class="form-group">
+                                <input type="submit" class= "btn btn-outline-info" id="incluiContato" name="incluiContato" value="     +     ">
+                              </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-9">
+                              <div class="form-group">
+                                <table class="table table-striped thead-dark" id="tabela" name="tabela">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Tipo</th>
+                                      <th scope="col">Contato</th>
+                                    </tr>
+                                    <!-- começo montar tabela -->
+                                    {% for contato in contatos %}
+                                      <tr>
+                                        <td>{{contato.tipo}}</td>
+                                        <td>{{contato.contato}}</td>
+                                      </tr>
+                                    {% endfor %}
+                                  </thead>
+                                  <tbody>
+                                </tbody>
+                                </table>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="row gutters">
+                          <div class="about">
+                            <h5 class="mb-2 text-primary">Sobre</h5>
+                            <textarea class="form-control" rows="6">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce in tincidunt tellus, id aliquet lectus. Nunc eu imperdiet enim. Integer dictum mi at imperdiet fringilla. Quisque elementum varius viverra. Nam eleifend quam sapien, vel iaculis nisl dapibus nec. Nullam turpis.</textarea>
+                          </div>
+                          <div class="form-group" align="right">
+                          </br>
+                            <input type="submit" class= "btn btn-outline-info" id="incluiContato" name="incluiContato" value="Incluir">
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </form>
+    </div>
+
+{% endblock %}
+{% block 'js' %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/profileestilo.css' %}">
+<script src="{% static 'js/formataCampos.js' %}"></script>
+<script src="{% static 'js/alteraImagem.js' %}"></script>
+<script src="{% static 'js/contatos.js' %}"></script>
+<script src="{% static 'js/cep.js' %}"></script>
+<script src="{% static 'js/apis.js' %}"></script>
+{% endblock %}
